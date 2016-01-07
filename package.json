@@ -15,7 +15,7 @@
   "author": "GitBook Team <contact@gitbook.com>",
   "license": "Apache-2.0",
   "dependencies": {
-    "brightml": "^3.0.2",
+    "brightml": "^3.0.3",
     "cheerio": "git://github.com/cheeriojs/cheerio.git#70c5608113d3efaf584efd29edafe173b74e106f",
     "lodash": "^3.10.1",
     "mammoth": "^0.3.29",
