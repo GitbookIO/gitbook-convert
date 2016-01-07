@@ -3,6 +3,7 @@ var path = require('path');
 
 var Q = require('q');
 var mammoth = require('mammoth');
+var normall = require('normall');
 
 function convert(opts) {
     var d = Q.defer();
@@ -32,6 +33,8 @@ function convert(opts) {
                 imgCounter++;
             }
 
+            // Normalize filename
+            imgFilename = normall.filename(imgFilename);
             // Add extension
             imgFilename = imgFilename+'.'+element.contentType.split('/')[1];
             // Create path
