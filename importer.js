@@ -34,19 +34,15 @@ var Importer = function(opts) {
 
         // Create folders
         that.createDirectories()
-        .then(function() {
+        .fin(function() {
         // Actually convert to HTML
             that.convert()
             .then(function() {
-                that.clean();
-                that.parseChapters();
+                that.extractFootnotes();
+                that.parseAndClean();
                 that.toMarkdown();
                 that.writeFiles();
             });
-        })
-        .fail(function(err) {
-            console.log(err.stack);
-            throw err;
         });
     })
     .fail(function(err) {
@@ -82,7 +78,7 @@ Importer.prototype.createDirectories = function() {
     })
     .fin(function() {
         console.log('Creating summary file...');
-        return Q.nfcall(fs.appendFile, that._summaryFile, '# Summary\n\n');
+        return Q.nfcall(fs.writeFile, that._summaryFile, '# Summary\n\n');
     })
     .fin(function() {
         console.log('Done.');
@@ -109,17 +105,84 @@ Importer.prototype.convert = function() {
     return d.promise;
 };
 
-// Clean converted HTML
-Importer.prototype.clean = function() {
-    console.log('Cleaning up HTML...');
-    this._html = brightml.clean(this._html);
+// Move footnotes before next <h1>
+Importer.prototype.extractFootnotes = function() {
+    var that = this;
+    that._footnotes = {};
+
+    $ = cheerio.load(this._html);
+
+    console.log('Extracting footnotes...');
+    $('a').each(function() {
+        // Get origin id and href attributes
+        var attributes = getTagAttributes($(this));
+        var originHref = attributes.href;
+        var originId = attributes.id;
+
+        // originId could also be set on parent <sup> tag
+        if (!originId) {
+            var $parent = $(this).parent();
+            if (!$parent.length) return;
+
+            var parentTag = getTagName($parent);
+            if (parentTag !== 'sup') return;
+
+            var parentAttributes = getTagAttributes($parent);
+            originId = parentAttributes.id;
+        }
+
+        // Both id and href must be set in a footnote origin link
+        if (!originHref || !originId) return;
+
+        // Check if href is an id-like link
+        if (_.startsWith(originHref, '#')) {
+            // Get referenced element
+            var $referencedTag = $(originHref);
+            if (!$referencedTag.length) return;
+
+            // Check that referred element has a link back to origin
+            var $linkToOrigin = $('a[id="'+originId+'"]');
+            if (!$referencedTag.has($linkToOrigin)) return;
+
+            // Change referred element to a <p> tag
+            var $replacement;
+            if ($referencedTag.children().length === 1 && $referencedTag.children().first().is('p')) {
+                $replacement = $referencedTag.children().first();
+            }
+            else {
+                $replacement = $('<p>'+$referencedTag.html()+'</p>');
+            }
+
+            // Wrap content in a <sup> tag if not already and prepend content with origin link text
+            if ($replacement.children().first().is('sup')) {
+                $replacement.children().first().html($(this).text()+' '+$replacement.children().first().html());
+            }
+            else {
+                $replacement.html('<sup>'+$(this).text()+' '+$replacement.html().trim()+'</sup>');
+            }
+
+            // Copy attributes
+            var referencedTagAttributes = getTagAttributes($referencedTag);
+            for (var attr in referencedTagAttributes) {
+                $replacement.children().first().attr(attr, referencedTagAttributes[attr]);
+            }
+
+            // Save footnote by reference and remove from DOM
+            that._footnotes[originHref] = $replacement.html();
+            $referencedTag.remove();
+        }
+    });
+
+    that._html = $.html();
     console.log('Done.');
 };
 
 // Create HTML tree
-Importer.prototype.parseChapters = function() {
-    console.log('Parsing chapters...');
+Importer.prototype.parseAndClean = function() {
+    var that = this;
 
+    // Split book by main titles
+    console.log('Parsing chapters...');
     var parts = this._html.split(/(\<h1.*?h1\>)/g);
     var titles = [];
     var chapters = [];
@@ -130,9 +193,8 @@ Importer.prototype.parseChapters = function() {
             // Get title
             $ = cheerio.load(html);
             var title = $('h1').text();
-            var id = $('h1').attr('id');
+            var id = normalizeId(title);
             var el = {
-                type: 'title',
                 title: title,
                 titleId: id,
                 titleHTML: html
@@ -142,14 +204,13 @@ Importer.prototype.parseChapters = function() {
         // Is a chapter
         else {
             var el = {
-                type: 'chapter',
                 content: html
             };
             chapters.push(el);
         }
     });
 
-    // Normalize titles
+    // Resolve filenames
     titles = titles.map(function(el, index) {
         var paddedIndex = zeroPad(index+1, titles.length+1);
         el.filename = paddedIndex+'-'+normall.filename(el.title)+'.md';
@@ -158,8 +219,7 @@ Importer.prototype.parseChapters = function() {
 
     // Add README
     titles.unshift({
-        type: 'title',
-        title: 'README',
+        title: 'Introduction',
         titleHTML: '<h1>My Awesome Book</h1>',
         filename: 'README.md'
     });
@@ -168,16 +228,105 @@ Importer.prototype.parseChapters = function() {
     // The first chapter will be used as content
     if (titles.length > chapters.length) {
         chapters.unshift({
-            type: 'chapter',
-            content: '<p>This file file serves as your book\'s preface, a great place to describe your book\'s content and ideas.</p>'
+            content: '<p>This file serves as your book\'s preface, a great place to describe your book\'s content and ideas.</p>'
         });
     }
 
     // Join title / content
     chapters = chapters.map(function(c, index) {
+        // Put back together title and chapter
         c = _.defaults(c, titles[index]);
         c.content = c.titleHTML+c.content;
         delete c.titleHTML;
+        return c;
+    });
+
+    // Reset footnotes at the end of the good chapter
+    chapters = chapters.map(function(c) {
+        $ = cheerio.load(c.content);
+
+        $('sup').each(function() {
+            if ($(this).children().first().is('a')) {
+                var footnoteId = $(this).children().first().attr('href');
+
+                if (!!that._footnotes[footnoteId]) {
+                    var footnoteHTML = that._footnotes[footnoteId];
+                    var $footnote = $('<p>'+footnoteHTML+'</p>');
+                    $('*').last().after($footnote);
+
+                    delete that._footnotes[footnoteId];
+                }
+            }
+        });
+
+        c.content = $.html();
+        return c;
+    });
+
+    // Clean HTML
+    console.log('Cleaning HTML...');
+    chapters = chapters.map(function(c, index) {
+        // Clean chapter's HTML
+        brightml.parse(c.content);
+        brightml.setAnchorsId();
+        brightml.cleanElements();
+        brightml.removeNestedTables();
+        brightml.formatTables();
+        brightml.cleanTableCells();
+
+        c.content = brightml.render();
+        return c;
+    });
+
+    // Normalize titles id
+    console.log('Normalizing titles id...');
+    var titleTags = ['h1', 'h2', 'h3', 'h4', 'h5', 'h6'];
+    var ids = [];
+    var counter;
+
+    chapters = chapters.map(function(c, i, chaptersArr) {
+        $ = cheerio.load(c.content);
+
+        titleTags.forEach(function(titleTag) {
+            $(titleTag).each(function() {
+                // Compute new id
+                var oldId = $(this).attr('id');
+                var textId = normalizeId($(this).text());
+
+                var newId = textId;
+                counter = 0;
+                while (_.includes(ids, newId)) {
+                    newId = textId+'-'+counter;
+                    counter++;
+                }
+                // Prevent obtaining the same id twice
+                ids.push(newId);
+
+                // Replace id in href links in other chapters
+                chaptersArr = chaptersArr.map(function(chapter, index) {
+                    if (i === index) return;
+
+                    $chapter = cheerio.load(chapter.content);
+
+                    $chapter('*[href="#'+oldId+'"]').each(function() {
+                        $(this).attr('href', '#'+newId);
+                    });
+
+                    chapter.content = $chapter.html();
+                    return chapter;
+                });
+
+                // Replace id in href links in current chapter
+                $('*[href="#'+oldId+'"]').each(function() {
+                    $(this).attr('href', '#'+newId);
+                });
+
+                // Replace title id
+                $(this).attr('id', newId);
+            });
+        });
+
+        c.content = $.html();
         return c;
     });
 
@@ -285,6 +434,7 @@ Importer.prototype.toMarkdown = function() {
     console.log('Done.');
 };
 
+// Write each chapter to a .md file
 Importer.prototype.writeFiles = function() {
     var that = this;
 
@@ -311,11 +461,30 @@ Importer.prototype.writeFiles = function() {
     console.log('Done.');
 };
 
+// Normalize an id
+function normalizeId(id) {
+    // Replace any non alpha-numeric character by an hyphen
+    id = id.replace(/[^a-zA-Z\d]+/g, '-');
+    // Make lowercase
+    id = id.toLowerCase();
+    return id;
+};
+
 function zeroPad(n, l) {
     n = n.toString();
     l = l.toString();
     while (n.length < l.length) { n = '0'+n; }
     return n;
+}
+
+// Return a tag name in lower case
+function getTagName(el) {
+    return el.get(0).name.toLowerCase();
+}
+
+// Return the tag attributes
+function getTagAttributes(el) {
+    return el.get(0).attribs;
 }
 
 module.exports = Importer;
