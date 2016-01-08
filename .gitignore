@@ -1,4 +1,5 @@
 node_modules/
 export/
+.eslintrc
 *.docx
 *.xml
