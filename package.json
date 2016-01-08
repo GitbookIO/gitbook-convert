@@ -17,10 +17,12 @@
   "dependencies": {
     "brightml": "^3.0.3",
     "cheerio": "git://github.com/cheeriojs/cheerio.git#70c5608113d3efaf584efd29edafe173b74e106f",
+    "commander": "^2.9.0",
     "lodash": "^3.10.1",
     "mammoth": "^0.3.29",
     "normall": "^0.2.2",
-    "q": "^1.4.1"
+    "q": "^1.4.1",
+    "to-markdown": "git://github.com/jpreynat/to-markdown.git#ece14efeff0bc1a14a01868b10058499e4a3f863"
   },
   "contributors": [
     {
