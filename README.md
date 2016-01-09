@@ -15,7 +15,7 @@ $ npm install gitbook-convert -g
 ## Use
 
 ```shell
-$ gitbook-convert [options] &lt;file&gt;
+$ gitbook-convert [options] <file>
 ```
 
 ### Options
