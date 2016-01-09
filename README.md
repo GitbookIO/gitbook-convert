@@ -20,18 +20,18 @@ $ gitbook-convert [options] &lt;file&gt;
 
 ### Options
 
-Short | Long | Description | Type | Default
--- | -- | -- | -- | --
--e | --export-dir | Name of the main export directory | `string` | `export`
--a | --assets-dir | Name of the document's assets export directory | `string` | `assets`
+| Short | Long | Description | Type | Default |
+| ----- | ---- | ----------- | ---- | ------- |
+| -e | --export-dir | Name of the main export directory | string | export |
+| -a | --assets-dir | Name of the document's assets export directory | string | assets |
 
 After converting your document, the corresponding GitBook files will be placed in `./export/<file>/`.
 
 ### Currently accepted formats
 
-Type | Extension
--- | --
-Microsoft Office Open XML Document | `.docx`
+| Type | Extension |
+| ---- | --------- |
+| Microsoft Office Open XML Document | .docx |
 
 ## Output
 
