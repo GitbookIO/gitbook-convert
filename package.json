@@ -1,6 +1,6 @@
 {
   "name": "gitbook-convert",
-  "version": "0.1.0",
+  "version": "0.0.1",
   "description": "Convert your existing books in different formats to GitBook",
   "main": "index.js",
   "scripts": {
