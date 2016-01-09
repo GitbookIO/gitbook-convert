@@ -2,7 +2,12 @@
   "name": "gitbook-convert",
   "version": "0.0.1",
   "description": "Convert your existing books in different formats to GitBook",
-  "main": "index.js",
+  "author": "GitBook Team <contact@gitbook.com>",
+  "license": "Apache-2.0",
+  "main": "bin/gitbook-convert.js",
+  "bin": {
+    "gitbook-convert": "bin/gitbook-convert.js"
+  },
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },
@@ -12,8 +17,6 @@
     "convert",
     "book"
   ],
-  "author": "GitBook Team <contact@gitbook.com>",
-  "license": "Apache-2.0",
   "dependencies": {
     "brightml": "^3.0.3",
     "cheerio": "git://github.com/cheeriojs/cheerio.git#70c5608113d3efaf584efd29edafe173b74e106f",
