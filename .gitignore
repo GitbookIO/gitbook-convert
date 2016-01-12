@@ -3,3 +3,4 @@ export/
 .eslintrc
 *.docx
 *.xml
+*.html
