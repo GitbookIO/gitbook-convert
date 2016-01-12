@@ -1,6 +1,8 @@
 node_modules/
 export/
+resources/
 .eslintrc
 *.docx
 *.xml
 *.html
+*.css
