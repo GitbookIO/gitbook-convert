@@ -3,7 +3,7 @@
 var _ = require('lodash');
 var program = require('commander');
 
-var Converter = require('../lib/converter');
+var gitbookConvert = require('../lib/index');
 
 var allowedFormats = require('../lib/converters').allowedFormats;
 var pkg = require('../package.json');
@@ -37,5 +37,5 @@ var opts = {
     assetsDirectory: program.assetsDir
 };
 
-var converter = new Converter(opts);
+var converter = gitbookConvert.pickConverter(opts);
 converter.convert();
