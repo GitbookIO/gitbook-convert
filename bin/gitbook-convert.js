@@ -37,7 +37,7 @@ var opts = {
     filename: program.args[0],
     rootDirectory: program.exportDir,
     assetsDirectory: program.assetsDir,
-    titleDepth: parseInt(program.depth, 10),
+    titleDepth: parseInt(program.maxDepth, 10),
     debug: program.debug
 };
 
