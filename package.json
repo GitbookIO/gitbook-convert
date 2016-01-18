@@ -9,6 +9,7 @@
     "gitbook-convert": "bin/gitbook-convert.js"
   },
   "scripts": {
+    "postinstall": "scripts/resources.sh",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "keywords": [
