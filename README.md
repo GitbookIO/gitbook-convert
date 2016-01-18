@@ -147,6 +147,8 @@ The content of the `README.md` file will be:
 A short history of modern computers.
 ```
 
+The behavior is the same when `--max-depth` is set to higher levels. Each `README.md` in the sub-chapters folders will contain the preface for the current chapter.
+
 ## Converters
 
 The appropriate converter for a document type is deduced from its extension.
