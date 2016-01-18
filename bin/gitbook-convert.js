@@ -13,7 +13,8 @@ program
     .usage('[options] <file>')
     .option('-e, --export-dir [dirname]', 'Name of the main export directory', 'export')
     .option('-a, --assets-dir [dirname]', 'Name of the document\'s assets export directory', 'assets')
-    .option('-d, --depth [integer]', 'Maximum title depth to use to split your original document into sub-chapters', 2);
+    .option('-m, --max-depth [integer]', 'Maximum title depth to use to split your original document into sub-chapters', 2)
+    .option('-d, --debug', 'Log stack trace when an error occurs');
 
 program.on('--help', function() {
     console.log('  gitbook-convert accepts the following formats:');
@@ -36,8 +37,18 @@ var opts = {
     filename: program.args[0],
     rootDirectory: program.exportDir,
     assetsDirectory: program.assetsDir,
-    titleDepth: parseInt(program.depth, 10)
+    titleDepth: parseInt(program.depth, 10),
+    debug: program.debug
 };
 
-var converter = gitbookConvert.pickConverter(opts);
+var converter;
+try {
+    converter = gitbookConvert.pickConverter(opts);
+}
+catch(err) {
+    console.log(err.message);
+    if (program.debug) console.log(err.stack);
+    process.exit(1);
+}
+
 converter.convert();
