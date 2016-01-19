@@ -11,7 +11,6 @@ var pkg = require('../package.json');
 program
     .version(pkg.version)
     .usage('[options] <file>')
-    .option('-e, --export-dir [dirname]', 'Name of the main export directory', 'export')
     .option('-a, --assets-dir [dirname]', 'Name of the document\'s assets export directory', 'assets')
     .option('-m, --max-depth [integer]', 'Maximum title depth to use to split your original document into sub-chapters', 2)
     .option('-d, --debug', 'Log stack trace when an error occurs');
@@ -35,9 +34,10 @@ if(_.isEmpty(program.parse(process.argv).args) && process.argv.length === 2) {
 
 var opts = {
     filename: program.args[0],
-    rootDirectory: program.exportDir,
+    exportDir: program.args[1] || 'export',
     assetsDirectory: program.assetsDir,
     titleDepth: parseInt(program.maxDepth, 10),
+    noExtraDirectories: !program.ExtraDirectories,
     debug: program.debug
 };
 
