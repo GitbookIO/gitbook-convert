@@ -19,7 +19,7 @@
     "book"
   ],
   "dependencies": {
-    "brightml": "^3.0.4",
+    "brightml": "^3.0.5",
     "cheerio": "git://github.com/cheeriojs/cheerio.git#70c5608113d3efaf584efd29edafe173b74e106f",
     "commander": "^2.9.0",
     "lodash": "^3.10.1",
