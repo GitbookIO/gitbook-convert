@@ -15,19 +15,18 @@ $ npm install gitbook-convert -g
 ## Use
 
 ```shell
-$ gitbook-convert [options] <file>
+$ gitbook-convert [options] <file> [export-directory]
 ```
 
 ### Options
 
 | Short | Long | Description | Type | Default |
 | ----- | ---- | ----------- | ---- | ------- |
-| -e | --export-dir | Name of the main export directory | string | export |
 | -a | --assets-dir | Name of the document's assets export directory | string | assets |
 | -m | --max-depth | Maximum title depth to use to split your original document into sub-chapters | integer | 2 |
 | -d | --debug | Log stack trace when an error occurs | flag | false |
 
-After converting your document, the corresponding GitBook files will be placed in `./export/<file>/`.
+After converting your document, the corresponding GitBook files will be placed in the `export-directory`. If not provided, the default name is `export` and is created in the current working directory.
 
 ### Currently accepted formats
 
