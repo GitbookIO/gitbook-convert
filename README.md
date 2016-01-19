@@ -26,7 +26,9 @@ $ gitbook-convert [options] <file> [export-directory]
 | -m | --max-depth | Maximum title depth to use to split your original document into sub-chapters | integer | 2 |
 | -d | --debug | Log stack trace when an error occurs | flag | false |
 
-After converting your document, the corresponding GitBook files will be placed in the `export-directory`. If not provided, the default name is `export` and is created in the current working directory.
+After converting your document, the corresponding GitBook files will be placed in the provided `export-directory` folder. The folder is created during conversion.
+
+If `export-directory` is not provided, a new `export` folder is created in the current working directory. The GitBook files are then placed here.
 
 ### Currently accepted formats
 
