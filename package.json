@@ -1,6 +1,6 @@
 {
   "name": "gitbook-convert",
-  "version": "0.0.15",
+  "version": "0.0.16",
   "description": "Convert your existing books in different formats to GitBook",
   "author": "GitBook Team <contact@gitbook.com>",
   "license": "Apache-2.0",
