@@ -13,6 +13,7 @@ program
     .usage('[options] <file>')
     .option('-a, --assets-dir [dirname]', 'Name of the document\'s assets export directory', 'assets')
     .option('-m, --max-depth [integer]', 'Maximum title depth to use to split your original document into sub-chapters', 2)
+    .option('-p, --prefix', 'Prefix filenames by an incremental counter')
     .option('-d, --debug', 'Log stack trace when an error occurs');
 
 program.on('--help', function() {
@@ -37,7 +38,7 @@ var opts = {
     exportDir: program.args[1] || 'export',
     assetsDirectory: program.assetsDir,
     titleDepth: parseInt(program.maxDepth, 10),
-    noExtraDirectories: !program.ExtraDirectories,
+    prefix: program.prefix,
     debug: program.debug
 };
 
