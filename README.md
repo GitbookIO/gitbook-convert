@@ -24,6 +24,7 @@ $ gitbook-convert [options] <file> [export-directory]
 | ----- | ---- | ----------- | ---- | ------- |
 | -a | --assets-dir | Name of the document's assets export directory | string | assets |
 | -m | --max-depth | Maximum title depth to use to split your original document into sub-chapters | integer | 2 |
+| -p | --prefix | Prefix filenames by an incremental counter | flag | false |
 | -d | --debug | Log stack trace when an error occurs | flag | false |
 
 After converting your document, the corresponding GitBook files will be placed in the provided `export-directory` folder. The folder is created during conversion.
