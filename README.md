@@ -39,6 +39,7 @@ If the `--document-title` argument is not passed, the filename without the file 
 | Type | Extension |
 | ---- | --------- |
 | Microsoft Office Open XML Document | .docx |
+| OpenOffice / Open Document Format | .odt |
 | Docbook Markup Language | .xml |
 | HyperText Markup Language | .html |
 
@@ -168,6 +169,12 @@ For now, the converters should:
 The `.docx` converter uses mwilliamson's [mammoth.js](https://github.com/mwilliamson/mammoth.js) to convert your document to HTML before generating the output.
 
 `gitbook-convert` will try to export your inline images in the `/assets` folder, using the image title as the image filename if provided.
+
+### odt
+
+The `.odt` converter uses [odt2html](https://github.com/GitbookIO/odt2html) to convert your document to HTML before generating the output. Because there was no node module out there to convert OpenOffice documents to HTML, we built our own.
+
+`gitbook-convert` will try to export your inline images in the `/assets` folder, using the image name in the document as the image filename if provided.
 
 ### docbook
 
