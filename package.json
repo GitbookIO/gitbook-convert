@@ -25,6 +25,7 @@
     "lodash": "^3.10.1",
     "mammoth": "^0.3.29",
     "normall": "^0.2.2",
+    "odt2html": "1.0.1",
     "q": "^1.4.1",
     "to-markdown": "git://github.com/jpreynat/to-markdown.git#ece14efeff0bc1a14a01868b10058499e4a3f863"
   },
