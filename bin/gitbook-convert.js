@@ -1,12 +1,13 @@
 #! /usr/bin/env node
+/* eslint-disable no-console */
 
-var _ = require('lodash');
-var program = require('commander');
+const _       = require('lodash');
+const program = require('commander');
 
-var gitbookConvert = require('../lib/index');
+const gitbookConvert = require('../lib/index');
 
-var allowedFormats = require('../lib/converters').allowedFormats;
-var pkg = require('../package.json');
+const ALLOWED_FORMATS = require('../lib/converters').ALLOWED_FORMATS;
+const pkg             = require('../package.json');
 
 program
     .version(pkg.version)
@@ -17,12 +18,10 @@ program
     .option('-p, --prefix', 'Prefix filenames by an incremental counter')
     .option('-d, --debug', 'Log stack trace when an error occurs');
 
-program.on('--help', function() {
+program.on('--help', () => {
     console.log('  gitbook-convert accepts the following formats:');
     console.log('');
-    allowedFormats.forEach(function(format) {
-        console.log('    .'+format.ext+': '+format.description);
-    });
+    ALLOWED_FORMATS.forEach(format => console.log(`    .${format.ext}: ${format.description}`));
     console.log('');
     console.log('  After converting your document, the corresponding GitBook files will be placed in ./export/<file>/.');
 });
@@ -30,27 +29,30 @@ program.on('--help', function() {
 program.parse(process.argv);
 
 // Parse and fallback to help if no args
-if(_.isEmpty(program.parse(process.argv).args) && process.argv.length === 2) {
+if (_.isEmpty(program.parse(process.argv).args) && process.argv.length === 2) {
     program.help();
 }
 
-var opts = {
-    filename: program.args[0],
-    exportDir: program.args[1] || 'export',
-    documentTitle: program.documentTitle,
+const opts = {
+    filename:        program.args[0],
+    exportDir:       program.args[1] || 'export',
+    documentTitle:   program.documentTitle,
     assetsDirectory: program.assetsDir,
-    titleDepth: parseInt(program.maxDepth, 10),
-    prefix: program.prefix,
-    debug: program.debug
+    titleDepth:      parseInt(program.maxDepth, 10),
+    prefix:          program.prefix,
+    debug:           program.debug
 };
 
-var converter;
+let converter;
 try {
-    converter = gitbookConvert.pickConverter(opts);
+    converter = new gitbookConvert.pickConverter(opts);
 }
-catch(err) {
+catch (err) {
     console.log(err.message);
-    if (program.debug) console.log(err.stack);
+    if (program.debug) {
+        console.log(err.stack);
+    }
+
     process.exit(1);
 }
 
