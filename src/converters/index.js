@@ -1,29 +1,29 @@
-var docx = require('./docx');
-var html = require('./html');
-var xml = require('./xml');
-var odt = require('./odt');
+const docx = require('./docx');
+const html = require('./html');
+const xml  = require('./xml');
+const odt  = require('./odt');
 
 module.exports = {
-    allowedFormats: [
+    ALLOWED_FORMATS: [
         {
             description: 'Microsoft Office Open XML Document',
-            ext: 'docx'
+            ext:         'docx'
         },
         {
             description: 'HyperText Markup Language',
-            ext: 'html'
+            ext:         'html'
         },
         {
             description: 'Docbook Markup Language',
-            ext: 'xml'
+            ext:         'xml'
         },
         {
             description: 'OpenOffice / Open Document Format',
-            ext: 'odt'
+            ext:         'odt'
         }
     ],
-    docx: docx,
-    html: html,
-    xml: xml,
-    odt: odt
+    docx,
+    html,
+    xml,
+    odt
 };

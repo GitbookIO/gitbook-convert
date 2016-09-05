@@ -8,8 +8,14 @@
   "bin": {
     "gitbook-convert": "bin/gitbook-convert.js"
   },
+  "babel": {
+    "presets": [
+      "es2015"
+    ]
+  },
   "scripts": {
-    "prepublish": "scripts/resources.sh",
+    "compile": "rm -rf lib/ && babel --presets es2015 -d lib/ src/",
+    "prepublish": "scripts/resources.sh && npm run compile",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "keywords": [
@@ -34,5 +40,11 @@
       "name": "Johan Preynat",
       "email": "johan@gitbook.com"
     }
-  ]
+  ],
+  "devDependencies": {
+    "babel-cli": "^6.14.0",
+    "babel-polyfill": "^6.13.0",
+    "babel-preset-es2015": "^6.14.0",
+    "eslint": "^3.4.0"
+  }
 }

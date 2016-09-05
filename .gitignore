@@ -1,6 +1,8 @@
 node_modules/
-export/
 resources/
+test_docs/
+lib/
+
 .eslintrc
 *.docx
 *.xml
