@@ -1,13 +1,13 @@
 #! /usr/bin/env node
 /* eslint-disable no-console */
 
-const _       = require('lodash');
-const program = require('commander');
+var _       = require('lodash');
+var program = require('commander');
 
-const gitbookConvert = require('../lib/index');
+var gitbookConvert = require('../lib/index');
 
-const ALLOWED_FORMATS = require('../lib/converters').ALLOWED_FORMATS;
-const pkg             = require('../package.json');
+var ALLOWED_FORMATS = require('../lib/converters').ALLOWED_FORMATS;
+var pkg             = require('../package.json');
 
 // Describe program options
 program
@@ -20,10 +20,12 @@ program
     .option('-d, --debug', 'Log stack trace when an error occurs');
 
 // Customize --help flag
-program.on('--help', () => {
+program.on('--help', function() {
     console.log('  gitbook-convert accepts the following formats:');
     console.log('');
-    ALLOWED_FORMATS.forEach(format => console.log(`    .${format.ext}: ${format.description}`));
+    ALLOWED_FORMATS.forEach(function(format) {
+        console.log('    .' + format.ext + ': ' + format.description);
+    });
     console.log('');
     console.log('  After converting your document, the corresponding GitBook files will be placed in ./export/<file>/.');
 });
@@ -37,7 +39,7 @@ if (_.isEmpty(program.parse(process.argv).args) && process.argv.length === 2) {
 }
 
 // Construct converters options
-const opts = {
+var opts = {
     filename:        program.args[0],
     exportDir:       program.args[1] || 'export',
     documentTitle:   program.documentTitle,
@@ -48,7 +50,7 @@ const opts = {
 };
 
 // Get a converter based on filename
-let converter;
+var converter;
 try {
     converter = gitbookConvert.pickConverter(opts);
 }
