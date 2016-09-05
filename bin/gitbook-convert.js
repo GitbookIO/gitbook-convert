@@ -9,6 +9,7 @@ const gitbookConvert = require('../lib/index');
 const ALLOWED_FORMATS = require('../lib/converters').ALLOWED_FORMATS;
 const pkg             = require('../package.json');
 
+// Describe program options
 program
     .version(pkg.version)
     .usage('[options] <file>')
@@ -18,6 +19,7 @@ program
     .option('-p, --prefix', 'Prefix filenames by an incremental counter')
     .option('-d, --debug', 'Log stack trace when an error occurs');
 
+// Customize --help flag
 program.on('--help', () => {
     console.log('  gitbook-convert accepts the following formats:');
     console.log('');
@@ -26,6 +28,7 @@ program.on('--help', () => {
     console.log('  After converting your document, the corresponding GitBook files will be placed in ./export/<file>/.');
 });
 
+// Parse passed arguments
 program.parse(process.argv);
 
 // Parse and fallback to help if no args
@@ -33,6 +36,7 @@ if (_.isEmpty(program.parse(process.argv).args) && process.argv.length === 2) {
     program.help();
 }
 
+// Construct converters options
 const opts = {
     filename:        program.args[0],
     exportDir:       program.args[1] || 'export',
@@ -43,9 +47,10 @@ const opts = {
     debug:           program.debug
 };
 
+// Get a converter based on filename
 let converter;
 try {
-    converter = new gitbookConvert.pickConverter(opts);
+    converter = gitbookConvert.pickConverter(opts);
 }
 catch (err) {
     console.log(err.message);
@@ -56,4 +61,5 @@ catch (err) {
     process.exit(1);
 }
 
+// Launch conversion to a GitBook
 converter.convert();
