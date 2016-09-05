@@ -25,6 +25,7 @@
     "book"
   ],
   "dependencies": {
+    "babel-polyfill": "^6.13.0",
     "brightml": "^3.0.7",
     "cheerio": "git://github.com/cheeriojs/cheerio.git#70c5608113d3efaf584efd29edafe173b74e106f",
     "commander": "^2.9.0",
@@ -43,7 +44,6 @@
   ],
   "devDependencies": {
     "babel-cli": "^6.14.0",
-    "babel-polyfill": "^6.13.0",
     "babel-preset-es2015": "^6.14.0",
     "eslint": "^3.4.0"
   }
